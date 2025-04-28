@@ -251,7 +251,7 @@ this task will handle the communication setup and update the neighbour table */
 void Task_Setup_Communication_Handler(void *pvParameters)
 {
     uint8_t RequestSpamNum = 0;
-    //uint8_t DebugData[50];
+    uint8_t DebugData[50];
     UART_Inf messageptr;
     bool isTimerSet = false;
     while (1)
