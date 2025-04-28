@@ -280,23 +280,6 @@ void Task_Test_Receive_Handler(void* pvParameters)
                     ackRequestSlotFailMessage.slot
                 );
                 break;
-            case UPDATE_HEAT_VALUE:
-                sprintf(data, 
-                    "UpdateHeatValueMessage:\n"
-                    "  Source MAC: %02X:%02X:%02X:%02X:%02X:%02X\n"
-                    "  Destination MAC: %02X:%02X:%02X:%02X:%02X:%02X\n"
-                    "  Percent to GW: %2d\n"
-                    "  Time to GW: %2d\n"
-                    "  Slot: %2d\n",
-                    updateHeatValueMessage.sourceAdress.OUIBits[0], updateHeatValueMessage.sourceAdress.OUIBits[1], updateHeatValueMessage.sourceAdress.OUIBits[2],
-                    updateHeatValueMessage.sourceAdress.NICSpecificBits[0], updateHeatValueMessage.sourceAdress.NICSpecificBits[1], updateHeatValueMessage.sourceAdress.NICSpecificBits[2],
-                    updateHeatValueMessage.destinationAdress.OUIBits[0], updateHeatValueMessage.destinationAdress.OUIBits[1], updateHeatValueMessage.destinationAdress.OUIBits[2],
-                    updateHeatValueMessage.destinationAdress.NICSpecificBits[0], updateHeatValueMessage.destinationAdress.NICSpecificBits[1], updateHeatValueMessage.destinationAdress.NICSpecificBits[2],
-                    (int)updateHeatValueMessage.percentToGW,
-                    (int)updateHeatValueMessage.timeToGW.simtime,
-                    updateHeatValueMessage.slot
-                );
-                break;
             case FORWARD_PACKET:
                 sprintf(data, 
                     "ForwardPacketMessage:\n"
@@ -342,23 +325,6 @@ void Task_Test_Receive_Handler(void* pvParameters)
                     (int)ackPacketFailToGWMessage.percentToGW,
                     (int)ackPacketFailToGWMessage.timeToGW.simtime,
                     ackPacketFailToGWMessage.seqNum
-                );
-                break;
-            case ACK_UPDATE_HEAT_VALUE:
-                sprintf(data, 
-                    "AckUpdateHeatValueMessage:\n"
-                    "  Source MAC: %02X:%02X:%02X:%02X:%02X:%02X\n"
-                    "  Destination MAC: %02X:%02X:%02X:%02X:%02X:%02X\n"
-                    "  Percent to GW: %2d\n"
-                    "  Time to GW: %2d\n"
-                    "  Slot: %2d\n",
-                    ackUpdateHeatValueMessage.sourceAdress.OUIBits[0], ackUpdateHeatValueMessage.sourceAdress.OUIBits[1], ackUpdateHeatValueMessage.sourceAdress.OUIBits[2],
-                    ackUpdateHeatValueMessage.sourceAdress.NICSpecificBits[0], ackUpdateHeatValueMessage.sourceAdress.NICSpecificBits[1], ackUpdateHeatValueMessage.sourceAdress.NICSpecificBits[2],
-                    ackUpdateHeatValueMessage.destinationAdress.OUIBits[0], ackUpdateHeatValueMessage.destinationAdress.OUIBits[1], ackUpdateHeatValueMessage.destinationAdress.OUIBits[2],
-                    ackUpdateHeatValueMessage.destinationAdress.NICSpecificBits[0], ackUpdateHeatValueMessage.destinationAdress.NICSpecificBits[1], ackUpdateHeatValueMessage.destinationAdress.NICSpecificBits[2],
-                    (int)ackUpdateHeatValueMessage.percentToGW,
-                    (int)ackUpdateHeatValueMessage.timeToGW.simtime,
-                    ackUpdateHeatValueMessage.slot
                 );
                 break;
             default:
