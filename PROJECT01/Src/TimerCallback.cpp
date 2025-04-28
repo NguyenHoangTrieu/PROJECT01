@@ -32,7 +32,9 @@ void vSlotTimerCallback(TimerHandle_t xTimer)
                 xTaskNotify(TaskSetupCommunication, 0, eNoAction);
                 SetCom_NotifyNum = SEND_FREE_SLOT_MESSAGE;
             }
-            else if(DEVICE_TYPE == NODE && selfInf.NumberOfCycle > 1){
+        }
+        else if(slotInf[selfInf.slot].isSlotAvailable == false && slotInf[selfInf.slot].isSlotSetup == true){
+            if(DEVICE_TYPE == NODE && selfInf.NumberOfCycle > 1){
                 xTaskNotify(TaskSend_or_ReceiveData, SEND_DATA_MESSAGE, eSetValueWithOverwrite);
                 isMultiSending = true;
             }

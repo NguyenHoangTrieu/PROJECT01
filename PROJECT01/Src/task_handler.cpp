@@ -251,14 +251,14 @@ this task will handle the communication setup and update the neighbour table */
 void Task_Setup_Communication_Handler(void *pvParameters)
 {
     uint8_t RequestSpamNum = 0;
-    uint8_t DebugData[50];
+    //uint8_t DebugData[50];
     UART_Inf messageptr;
     bool isTimerSet = false;
     while (1)
     {
         xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
-        sprintf((char*)DebugData, "Task Setup Communication: %d, %d\n", SetCom_NotifyNum, selfInf.slot);
-        vTaskDelay(pdMS_TO_TICKS(10));
+        //sprintf((char*)DebugData, "Task Setup Communication: %d, %d\n", SetCom_NotifyNum, selfInf.slot);
+        //HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
         switch (SetCom_NotifyNum)
         {
             case RECEIVE_FREE_SLOT_MESSAGE:
