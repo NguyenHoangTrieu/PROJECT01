@@ -28,7 +28,7 @@ void vSlotTimerCallback(TimerHandle_t xTimer)
             selfInf.NumberOfCycle++;
         }
         if(slotInf[selfInf.slot].isSlotAvailable == true && slotInf[selfInf.slot].isSlotSetup == false && currentLocalNodeNumber <= MAX_NEIGHBOUR){
-            if(DEVICE_TYPE == GATEWAY && selfInf.slot< MAX_NEIGHBOUR){
+            if(DEVICE_TYPE == GATEWAY && selfInf.slot < MAX_NEIGHBOUR){
                 xTaskNotify(TaskSetupCommunication, 0, eNoAction);
                 SetCom_NotifyNum = SEND_FREE_SLOT_MESSAGE;
             }
