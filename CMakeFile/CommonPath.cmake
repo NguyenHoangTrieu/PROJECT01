@@ -48,20 +48,20 @@ set(MIDDLEWARES_ADDED
         ${CMAKE_CURRENT_LIST_DIR}/../LoRa_AS32_lib/Inc/LoRa_AS32_lib.h
         ${CMAKE_CURRENT_LIST_DIR}/../LoRa_AS32_lib/Src/LoRa_AS32_lib.c
 
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/MessageReadWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/MessageParser.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/task_handler.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/peripheral.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/task_test_handler.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/Message_Task_Handler.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/TimerCallback.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/Calculate_Function.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/MessageReadWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/MessageParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/task_handler.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/peripheral.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/task_test_handler.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/Message_Task_Handler.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/TimerCallback.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/Calculate_Function.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Inc/FunctionHeader/MessageReadWrite.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Inc/FunctionHeader/protocolNaming.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Inc/MessageParser.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Inc/task_handler.hpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Inc/peripheral.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Inc/FunctionHeader/MessageReadWrite.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Inc/FunctionHeader/protocolNaming.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Inc/MessageParser.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Inc/task_handler.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Inc/peripheral.hpp
 )
 
 set(GLOBAL_INCLUDE_DIRS
@@ -72,5 +72,5 @@ set(GLOBAL_INCLUDE_DIRS
         ${CMAKE_CURRENT_LIST_DIR}/../Drivers/CMSIS/Include
         ${CMAKE_CURRENT_LIST_DIR}/../Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
         ${CMAKE_CURRENT_LIST_DIR}/../Third_Party/FreeRTOS/Source/include
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Inc/FunctionHeader
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Inc)
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Inc/FunctionHeader
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Inc)
