@@ -1,5 +1,5 @@
 #include "task_handler.hpp"
-// Task Create:
+// Task Create
 TaskHandle_t TaskReceiveUART1;
 TaskHandle_t TaskReceiveUART6;
 TaskHandle_t TaskSendUART1;
