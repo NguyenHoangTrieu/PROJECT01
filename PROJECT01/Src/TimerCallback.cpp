@@ -38,6 +38,7 @@ void vSlotTimerCallback(TimerHandle_t xTimer)
                 xTaskNotify(TaskSend_or_ReceiveData, SEND_DATA_MESSAGE, eSetValueWithOverwrite);
                 isMultiSending = true;
             }
+        else if(slotInf[selfInf.slot].isSlotAvailable == false && slotInf[selfInf.slot].isSlotSetup == false){}
         }
     }
     vTimerSetTimerID( xTimer, ( void * ) selfInf.slot );
