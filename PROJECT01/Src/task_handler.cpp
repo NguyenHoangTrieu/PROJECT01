@@ -80,13 +80,13 @@ void firstInitializtion(void)
     configASSERT( status == pdPASS );
     status = xTaskCreate(Task_Receive_UART1_Hanlder, "TaskReceiveUART1", 150, NULL, 3, &TaskReceiveUART1);
     configASSERT( status == pdPASS );
-    status = xTaskCreate(Task_Send_UART6_Handler, "TaskSendUART6", 150, NULL, 3, &TaskSendUART6);
+    status = xTaskCreate(Task_Send_UART6_Handler, "TaskSendUART6", 150, NULL, 4, &TaskSendUART6);
     configASSERT( status == pdPASS );
     status = xTaskCreate(Task_Send_UART1_Hanlder, "TaskSendUART1", 150, NULL, 3, &TaskSendUART1);
     configASSERT( status == pdPASS );
     status = xTaskCreate(Task_Error_Handler, "TaskErrorHandle", 150, NULL, 3, &TaskErrorHandle);
     configASSERT( status == pdPASS );
-    status = xTaskCreate(Task_Setup_Communication_Handler, "TaskSetupCommunication", 250, NULL, 3, &TaskSetupCommunication);
+    status = xTaskCreate(Task_Setup_Communication_Handler, "TaskSetupCommunication", 300, NULL, 3, &TaskSetupCommunication);
     configASSERT( status == pdPASS );
     status = xTaskCreate(Task_Send_or_ReceiveData_Handler, "TaskSendOrReceiveData", 250, NULL, 3, &TaskSend_or_ReceiveData);
     configASSERT( status == pdPASS );
