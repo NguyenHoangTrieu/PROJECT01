@@ -13,7 +13,7 @@ TaskHandle_t TaskSend_or_ReceiveData;
 TaskHandle_t TaskGetData;
 TaskHandle_t TaskDisplayData;
 //Message Task Create:
-TaskHandle_t FreeSlotMessageTask;
+TaskHandle_t FreeSlotMessageTask; 
 TaskHandle_t RequestSlotMessageTask;
 TaskHandle_t AckRequestSlotSuccessMessageTask;
 TaskHandle_t AckRequestSlotFailMessageTask;
