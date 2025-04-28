@@ -7,7 +7,7 @@
 #include "queue.h"
 #include "timers.h"
 #include "LoRa_AS32_lib.h"
-#include "HeatConfig.h"
+#include "Config.h"
 #include "Calculate_Function.hpp"
 // typedef:
 //variable:

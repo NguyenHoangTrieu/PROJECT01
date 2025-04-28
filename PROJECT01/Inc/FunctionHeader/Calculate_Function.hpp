@@ -1,5 +1,5 @@
 #include "protocolNaming.hpp"
-#include "HeatConfig.h"
+#include "Config.h"
 double calculatePRR(unsigned int totalSend, unsigned int totalSuccessSend, neighbourNode neighbourToSend);
 double calculateTimeToGW(int slot, neighbourNode neighbourInf);
 int chooseSlotToForwardPacket(neighbourNode *neighbourInf, int currentLocalNodeNumber);
