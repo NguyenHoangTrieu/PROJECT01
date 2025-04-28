@@ -12,9 +12,9 @@ void FreeSlot_Message_Handler(void *pvParameters)
     while (1)
     {
         xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
-       sprintf((char*)DebugData, "Task Receive Free Slot Message\n");
+        //sprintf((char*)DebugData, "Task Receive Free Slot Message\n");
         if (freeSlotMessage.checkSum == CheckSumCalculate(ReadData, FREE_SLOT_SIZE)){
-            HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
+            //HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
             if(DEVICE_TYPE == TEST_NODE) xTaskNotify(TaskTestReceive, (uint32_t)FREE_SLOT, eSetValueWithOverwrite);
             else {
                 if(selfInf.slot == 0 && is1stTimeInit == true && xTimerIsTimerActive(xSlotTimer) == pdFALSE) slot_check = 0;
@@ -103,9 +103,9 @@ void AckRequestSlotSuccess_Message_Handler(void *pvParameters)
     while (1)
     {
         xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
-        sprintf((char*)DebugData, "Task Receive Ack Request Slot Success Message\n");
+        //sprintf((char*)DebugData, "Task Receive Ack Request Slot Success Message\n");
         if (ackRequestSlotSuccessMessage.checkSum == CheckSumCalculate(ReadData, ACK_REQUEST_SLOT_SUCCESS_SIZE)){
-            HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
+            //HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
             if(DEVICE_TYPE == TEST_NODE) xTaskNotify(TaskTestReceive, (uint32_t)ACK_REQUEST_SLOT_SUCCESS, eSetValueWithOverwrite);
             else { 
                 if( AddressCompare(&selfInf.SelfAdress, &ackRequestSlotSuccessMessage.destinationAdress)
