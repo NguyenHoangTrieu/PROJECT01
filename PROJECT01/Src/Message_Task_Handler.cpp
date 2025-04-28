@@ -98,14 +98,14 @@ void RequestSlot_Message_Handler(void *pvParameters)
 // Ack Request Slot Success Message Handler:
 void AckRequestSlotSuccess_Message_Handler(void *pvParameters)
 {
-    // uint8_t DebugData[50];
+    uint8_t DebugData[50];
     UART_Inf messageptr;
     while (1)
     {
         xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
-       // sprintf((char*)DebugData, "Task Receive Ack Request Slot Success Message\n");
+        sprintf((char*)DebugData, "Task Receive Ack Request Slot Success Message\n");
         if (ackRequestSlotSuccessMessage.checkSum == CheckSumCalculate(ReadData, ACK_REQUEST_SLOT_SUCCESS_SIZE)){
-            // HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
+            HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
             if(DEVICE_TYPE == TEST_NODE) xTaskNotify(TaskTestReceive, (uint32_t)ACK_REQUEST_SLOT_SUCCESS, eSetValueWithOverwrite);
             else { 
                 if( AddressCompare(&selfInf.SelfAdress, &ackRequestSlotSuccessMessage.destinationAdress)
