@@ -74,13 +74,13 @@ void firstInitializtion(void)
     xStopSendDataTimer = xTimerCreate("StopSendDataTimer", pdMS_TO_TICKS(SEND_TIME),  pdFALSE, (void*)0, vStopSendDataTimerCallback);
     configASSERT( xStopSendDataTimer != NULL);
     // Create Task:
-    BaseType_t status;
+    BaseType_t status;  
     configASSERT( xSemaphoreUART1 != NULL );
     status = xTaskCreate(Task_Receive_UART6_Hanlder, "TaskReceiveUART6", 150, NULL, 4, &TaskReceiveUART6);
     configASSERT( status == pdPASS );
     status = xTaskCreate(Task_Receive_UART1_Hanlder, "TaskReceiveUART1", 150, NULL, 3, &TaskReceiveUART1);
     configASSERT( status == pdPASS );
-    status = xTaskCreate(Task_Send_UART6_Handler, "TaskSendUART6", 150, NULL, 4, &TaskSendUART6);
+    status = xTaskCreate(Task_Send_UART6_Handler, "TaskSendUART6", 150, NULL, 3, &TaskSendUART6);
     configASSERT( status == pdPASS );
     status = xTaskCreate(Task_Send_UART1_Hanlder, "TaskSendUART1", 150, NULL, 3, &TaskSendUART1);
     configASSERT( status == pdPASS );

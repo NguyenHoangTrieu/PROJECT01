@@ -23,7 +23,7 @@
 #define DATA_BUFFER_SIZE                20 // packets
 #define DISPLAY_BUFFER_SIZE             10 // Nodes  
 #define SLOT_TIME                       1000 // ms
-#define REQUEST_SPAM_TIME               160 // ms
+#define REQUEST_SPAM_TIME               100 // ms
 #define MAX_REQUEST_SPAM                3
 #define UPDATE_TIME_OUT                 200 // ms
 #define RESEND_TIME_OUT                 500 // ms
