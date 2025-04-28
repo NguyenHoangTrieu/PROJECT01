@@ -259,7 +259,7 @@ void Task_Setup_Communication_Handler(void *pvParameters)
         xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
         // sprintf((char*)DebugData, "Task Setup Communication: %d, %d\n", SetCom_NotifyNum, selfInf.slot);
         // HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
-        HAL_Delay(pdMS_TO_TICKS(10));
+        HAL_Delay(pdMS_TO_TICKS(5));
         switch (SetCom_NotifyNum)
         {
             case RECEIVE_FREE_SLOT_MESSAGE:
