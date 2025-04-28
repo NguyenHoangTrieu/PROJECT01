@@ -104,32 +104,6 @@ void Task_Test_Send_Handler(void* pvParameters)
             WriteAckRequestSlotFailMessage(Message, &message);
             check_msg = true;
         }
-        else if(strcmp((char*)data, "05") == 0){
-            UpdateHeatValueMessage message;
-            message.sourceAdress.OUIBits[0] = 0x00;
-            message.sourceAdress.OUIBits[1] = 0x0A;
-            message.sourceAdress.OUIBits[2] = 0xAA;
-            message.sourceAdress.NICSpecificBits[0] = 0x00;
-            message.sourceAdress.NICSpecificBits[1] = 0x00;
-            message.sourceAdress.NICSpecificBits[2] = 0x01;
-            message.destinationAdress.OUIBits[0] = 0x00;
-            message.destinationAdress.OUIBits[1] = 0x0A;
-            message.destinationAdress.OUIBits[2] = 0xAA;
-            message.destinationAdress.NICSpecificBits[0] = 0x00;
-            message.destinationAdress.NICSpecificBits[1] = 0x00;
-            message.destinationAdress.NICSpecificBits[2] = 0x02;
-            message.messageSize = (uint16_t)UPDATE_HEAT_VALUE_SIZE;
-            message.NumberOfHops = 0;
-            message.checkSum = 0b11000011;
-            message.messageType = UPDATE_HEAT_VALUE;
-            message.startSendTime = 0.0001;
-            message.percentToGW = 0.97;
-            message.timeToGW.simtime = 0.0001;
-            message.slot = 1;
-            messageptr.length = message.messageSize;
-            WriteUpdateHeatValueMessage(Message, &message);
-            check_msg = true;
-        }
         else if(strcmp((char*)data, "06") == 0){
             ForwardPacketMessage message;
             message.sourceAdress.OUIBits[0] = 0x00;
