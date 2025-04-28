@@ -3,7 +3,7 @@
 void FreeSlot_Message_Handler(void *pvParameters)
 {
     bool isMessageValid = false;
-    // uint8_t DebugData[50];
+    uint8_t DebugData[50];
     UART_Inf messageptr;
     TickType_t xNow = 0;
     TickType_t xExpiry = 0;
