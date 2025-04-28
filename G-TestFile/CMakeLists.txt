@@ -23,12 +23,12 @@ project(G_TestFile)
 enable_testing()
 
 add_executable(UnitTest
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/MessageReadWrite.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Src/Calculate_Function.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/MessageReadWrite.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Src/Calculate_Function.cpp
         UnitTest-Gtest.cpp)
         
 target_include_directories(UnitTest PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/../HEAT_Routing/Inc/FunctionHeader
+        ${CMAKE_CURRENT_LIST_DIR}/../PROJECT01/Inc/FunctionHeader
         ${CMAKE_CURRENT_LIST_DIR}/../Examples/Node01
         )
 

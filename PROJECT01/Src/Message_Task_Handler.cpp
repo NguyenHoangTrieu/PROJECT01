@@ -145,52 +145,7 @@ void AckRequestSlotFail_Message_Handler(void *pvParameters)
         else xTaskNotify(TaskErrorHandle, INVALID_MESSAGE, eSetValueWithOverwrite);
     }
 }
-// Update Heat Value Message Handler:
-void UpdateHeatValue_Message_Handler(void *pvParameters)
-{
-    // uint8_t DebugData[50];
-    UART_Inf messageptr;
-    bool check = false;
-    TickType_t xNow = 0;
-    TickType_t xExpiry = 0;
-    TickType_t xRemaining = 0; //remaining time until slot timer expires
-    int slot_check1 = 0;
-    while (1)
-    {
-        xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
-       // sprintf((char*)DebugData, "Task Receive Update Heat Value Message\n");
-        if (updateHeatValueMessage.checkSum == CheckSumCalculate(ReadData, UPDATE_HEAT_VALUE_SIZE)){
-            // HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
-            if (DEVICE_TYPE == TEST_NODE) xTaskNotify(TaskTestReceive, (uint32_t)UPDATE_HEAT_VALUE, eSetValueWithOverwrite);
-            else {
-                check = AddressCompare(&selfInf.SelfAdress, &updateHeatValueMessage.destinationAdress);
-                if(is1stTimeInit == true && check == false){
-                    if( xTimerIsTimerActive(xSlotTimer) == pdTRUE ){
-                        xExpiry = xTimerGetExpiryTime(xSlotTimer);
-                        xNow = xTaskGetTickCount();
-                        if (xExpiry >= xNow)
-                            xRemaining = xExpiry - xNow;
-                        else //if wrap around tick count:
-                            xRemaining = (portMAX_DELAY - xNow) + xExpiry;
-                    }
-                    if (xRemaining < pdMS_TO_TICKS(SLOT_TIME - 150)){
-                        if (selfInf.slot + 1 < MAX_SLOT) slot_check1 = selfInf.slot + 1;
-                        else slot_check1 = 0;
-                    }
-                    else slot_check1 = selfInf.slot;
-                    slotInf[slot_check1].isSlotAvailable = false;
-                    slotInf[slot_check1].isSlotSetup = false;
-                }
-                else{
-                    if(check == true){
-                        xTaskNotify(TaskUpdateHeatValue, RECEIVE_UPDATE_HEAT_VALUE, eSetValueWithOverwrite);
-                    }
-                }
-            }
-        }
-        else xTaskNotify(TaskErrorHandle, INVALID_MESSAGE, eSetValueWithOverwrite);
-    }
-}
+
 // Forward Packet Message Handler:
 void ForwardPacket_Message_Handler(void *pvParameters)
 {
@@ -255,26 +210,5 @@ void AckPacketFailToGW_Message_Handler(void *pvParameters)
         {
             xTaskNotify(TaskErrorHandle, INVALID_MESSAGE, eSetValueWithOverwrite);
         }
-    }
-}
-
-void AckUpdateHeatValue_Message_Handler(void *pvParameters)
-{
-    // uint8_t DebugData[50];
-    UART_Inf messageptr;
-    while (1)
-    {
-        xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
-       // sprintf((char*)DebugData, "Task Receive Ack Update Heat Value Message\n");
-        if (ackUpdateHeatValueMessage.checkSum == CheckSumCalculate(ReadData, ACK_UPDATE_HEAT_VALUE_SIZE)){
-            // HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
-            if(DEVICE_TYPE == TEST_NODE) xTaskNotify(TaskTestReceive, (uint32_t)ACK_UPDATE_HEAT_VALUE, eSetValueWithOverwrite);
-            else {
-                if(AddressCompare(&selfInf.SelfAdress, &ackUpdateHeatValueMessage.destinationAdress)){
-                    xTaskNotify(TaskUpdateHeatValue, RECEIVE_ACK_UPDATE, eSetValueWithOverwrite);
-                }
-            }
-        }
-        else xTaskNotify(TaskErrorHandle, INVALID_MESSAGE, eSetValueWithOverwrite);
     }
 }

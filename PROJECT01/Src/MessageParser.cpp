@@ -5,11 +5,9 @@ FreeSlotMessage freeSlotMessage;
 RequestSlotMessage requestSlotMessage;  
 AckRequestSlotSuccessMessage ackRequestSlotSuccessMessage;
 AckRequestSlotFailMessage ackRequestSlotFailMessage;
-UpdateHeatValueMessage updateHeatValueMessage;
 ForwardPacketMessage forwardPacketMessage;
 AckPacketToGWMessage ackPacketToGWMessage;
 AckPacketFailToGWMessage ackPacketFailToGWMessage;
-AckUpdateHeatValueMessage ackUpdateHeatValueMessage;
 uint8_t ReadData[MAX_MESSAGE_SIZE];
 uint8_t WriteData[MAX_MESSAGE_SIZE];
 /*Constructor of Message class*/
@@ -58,16 +56,6 @@ Message::Message(uint8_t *ReadData, uint16_t len){
                 }
             };
         break;
-        case UPDATE_HEAT_VALUE:
-            this->callback = [](void* _self, void* _buffer, uint16_t _len){
-                if (_len == UPDATE_HEAT_VALUE_SIZE){
-                    auto *data = static_cast<uint8_t*>(_buffer);
-                    ReadUpdateHeatValueMessage(data, &updateHeatValueMessage);
-                    xTaskNotify(UpdateHeatValueMessageTask, 0, eNoAction);
-                    //xQueueSend(xQueueMessage, &messageCheckPtr5, 10);
-                }
-            }; 
-        break;
         case FORWARD_PACKET:
             this->callback = [](void* _self, void* _buffer, uint16_t _len){
                 if ( _len <= FORWARD_PACKET_SIZE){
@@ -98,16 +86,6 @@ Message::Message(uint8_t *ReadData, uint16_t len){
                     //xQueueSend(xQueueMessage, &messageCheckPtr8, 10);
                 }
             };
-        case ACK_UPDATE_HEAT_VALUE:
-            this->callback = [](void* _self, void* _buffer, uint16_t _len){
-                if ( _len == ACK_UPDATE_HEAT_VALUE_SIZE){
-                    auto *data = static_cast<uint8_t*>(_buffer);
-                    ReadAckUpdateHeatValueMessage(data, &ackUpdateHeatValueMessage);
-                    xTaskNotify(AckUpdateHeatValueMessageTask, 0, eNoAction);
-                    //xQueueSend(xQueueMessage, &messageCheckPtr9, 10);
-                }
-            };
-        break;
         default:
         break;
     }

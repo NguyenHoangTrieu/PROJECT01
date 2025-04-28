@@ -7,11 +7,9 @@ extern FreeSlotMessage freeSlotMessage;
 extern RequestSlotMessage requestSlotMessage;  
 extern AckRequestSlotSuccessMessage ackRequestSlotSuccessMessage;
 extern AckRequestSlotFailMessage ackRequestSlotFailMessage;
-extern UpdateHeatValueMessage updateHeatValueMessage;
 extern ForwardPacketMessage forwardPacketMessage;
 extern AckPacketToGWMessage ackPacketToGWMessage;
 extern AckPacketFailToGWMessage ackPacketFailToGWMessage;
-extern AckUpdateHeatValueMessage ackUpdateHeatValueMessage;
 extern uint8_t ReadData[MAX_MESSAGE_SIZE];
 extern uint8_t WriteData[MAX_MESSAGE_SIZE];
 class Message {

@@ -9,7 +9,6 @@ TaskHandle_t TaskErrorHandle;
 TaskHandle_t TaskTestSend;
 TaskHandle_t TaskTestReceive;
 TaskHandle_t TaskSetupCommunication;
-TaskHandle_t TaskUpdateHeatValue;
 TaskHandle_t TaskSend_or_ReceiveData;
 TaskHandle_t TaskGetData;
 TaskHandle_t TaskDisplayData;
@@ -18,11 +17,9 @@ TaskHandle_t FreeSlotMessageTask;
 TaskHandle_t RequestSlotMessageTask;
 TaskHandle_t AckRequestSlotSuccessMessageTask;
 TaskHandle_t AckRequestSlotFailMessageTask;
-TaskHandle_t UpdateHeatValueMessageTask;
 TaskHandle_t ForwardPacketMessageTask;
 TaskHandle_t AckPacketToGWMessageTask;
 TaskHandle_t AckPacketFailToGWMessageTask;
-TaskHandle_t AckUpdateHeatValueMessageTask;
 // End.
 // Semaphore:
 SemaphoreHandle_t xSemaphoreUART6;
@@ -35,8 +32,6 @@ QueueHandle_t xQueueUART6Send;
 TimerHandle_t xSlotTimer;
 TimerHandle_t xRequestSlotTimer;
 TimerHandle_t xBeginTimer;
-TimerHandle_t xUpdateTimeOut;
-TimerHandle_t xUpdateResendTimer;
 TimerHandle_t xDataSendTimeOut; // ACK Data send timeout
 TimerHandle_t xGetDataTimer;
 TimerHandle_t xStopSendDataTimer;
@@ -74,10 +69,6 @@ void firstInitializtion(void)
     configASSERT( xRequestSlotTimer != NULL );
     xBeginTimer = xTimerCreate("BeginTimer", pdMS_TO_TICKS(BEGIN_TIME), pdFALSE, (void*)0, vBeginTimerCallback);
     configASSERT( xBeginTimer != NULL );
-    xUpdateTimeOut = xTimerCreate("UpdateTimeOut", pdMS_TO_TICKS(UPDATE_TIME_OUT), pdFALSE, (void*)0, vUpdateTimeOutCallback);
-    configASSERT( xUpdateTimeOut != NULL );
-    xUpdateResendTimer = xTimerCreate("UpdateResendTimeOut", pdMS_TO_TICKS(RESEND_TIME_OUT), pdFALSE, (void*)0, vUpdateResendTimeOutCallback);
-    configASSERT( xUpdateResendTimer != NULL );
     xDataSendTimeOut = xTimerCreate("DataSendTimeOut", pdMS_TO_TICKS(DATA_SEND_TIMEOUT), pdFALSE, (void*)0, vDataSendTimeOutCallback);
     configASSERT( xDataSendTimeOut != NULL );
     xStopSendDataTimer = xTimerCreate("StopSendDataTimer", pdMS_TO_TICKS(SEND_TIME),  pdFALSE, (void*)0, vStopSendDataTimerCallback);
@@ -97,8 +88,6 @@ void firstInitializtion(void)
     configASSERT( status == pdPASS );
     status = xTaskCreate(Task_Setup_Communication_Handler, "TaskSetupCommunication", 250, NULL, 3, &TaskSetupCommunication);
     configASSERT( status == pdPASS );
-    status = xTaskCreate(Task_Update_Heat_Value_Handler, "TaskUpdateHeatValue", 250, NULL, 3, &TaskUpdateHeatValue);
-    configASSERT( status == pdPASS );
     status = xTaskCreate(Task_Send_or_ReceiveData_Handler, "TaskSendOrReceiveData", 250, NULL, 3, &TaskSend_or_ReceiveData);
     configASSERT( status == pdPASS );
     // Message Task Create:
@@ -110,16 +99,12 @@ void firstInitializtion(void)
     configASSERT( status == pdPASS );
     status = xTaskCreate(AckRequestSlotFail_Message_Handler, "AckRequestSlotFailMessageTask", 150, NULL, 3, &AckRequestSlotFailMessageTask);
     configASSERT( status == pdPASS );
-    status = xTaskCreate(UpdateHeatValue_Message_Handler, "UpdateHeatValueMessageTask", 150, NULL, 3, &UpdateHeatValueMessageTask);
-    configASSERT( status == pdPASS );
     status = xTaskCreate(ForwardPacket_Message_Handler, "ForwardPacketMessageTask", 150, NULL, 3, &ForwardPacketMessageTask);
     configASSERT( status == pdPASS );
     status = xTaskCreate(AckPacketToGW_Message_Handler, "AckPacketToGWMessageTask", 150, NULL, 3, &AckPacketToGWMessageTask);
     configASSERT( status == pdPASS );
     status = xTaskCreate(AckPacketFailToGW_Message_Handler, "AckPacketFailToGWMessageTask", 150, NULL, 3, &AckPacketFailToGWMessageTask);
     configASSERT( status == pdPASS );
-    status = xTaskCreate(AckUpdateHeatValue_Message_Handler, "AckUpdateHeatValueTask", 150, NULL, 3, &AckUpdateHeatValueMessageTask);
-    configASSERT( status == pdPASS);
     // Other setup:
     is1stTimeInit = true;
     for(int i = 0; i < MAX_SLOT; i++)
@@ -430,112 +415,6 @@ void Task_Setup_Communication_Handler(void *pvParameters)
     }
 }
 
-void Task_Update_Heat_Value_Handler(void *pvParameters){
-    //uint8_t DebugData[50];
-    UART_Inf messageptr;
-    UpdateHeatValueMessage message;
-    AckUpdateHeatValueMessage message1;
-    int location = 0;
-    uint32_t Update_NotifyNum = 0;
-    bool MarkResend = false;
-    bool MarkReceiveUpdate = false;
-    while (1)
-    {
-        xTaskNotifyWait(0, 0, &Update_NotifyNum, portMAX_DELAY);
-        // sprintf((char*)DebugData, "Task Update Heat Value: %d, %d\n", Update_NotifyNum, selfInf.slot);
-        //HAL_UART_Transmit(&huart1, DebugData, strlen((char*)DebugData), 100);
-        switch (Update_NotifyNum)
-        {
-        case SEND_UPDATE_HEAT_VALUE_MESSAGE:
-            location = NeighbourLocation(neighbourInf, selfInf.slot, currentLocalNodeNumber);
-            if(neighbourInf[location].updateFirst == true){
-                message.sourceAdress = selfInf.SelfAdress;
-                message.destinationAdress = neighbourInf[location].Address;
-                message.messageSize = (uint16_t)UPDATE_HEAT_VALUE_SIZE;
-                message.NumberOfHops = 0;
-                message.messageType = UPDATE_HEAT_VALUE;
-                message.startSendTime = 0;
-                message.percentToGW = selfInf.PRR;
-                message.timeToGW.simtime = calculateTimeToGW(selfInf.slot, neighbourInf[selfInf.sendLocation]);
-                message.slot = selfInf.slot;
-                WriteUpdateHeatValueMessage(WriteData, &message);
-                messageptr.messagePtr = WriteData;
-                messageptr.length = message.messageSize;
-                xQueueSend(xQueueUART6Send, &messageptr, portMAX_DELAY);
-                if(MarkResend == false){
-                    xTimerReset(xUpdateTimeOut, 0);
-                    xTimerStart(xUpdateTimeOut, 0);
-                }
-                MarkResend = false;
-            }
-            else {
-                if(MarkReceiveUpdate == false){
-                    xTimerReset(xUpdateTimeOut, 0);
-                    xTimerStart(xUpdateTimeOut, 0);
-                }
-            }
-            break;
-        case TIMEOUT_MESSAGE:
-            MarkResend = true;
-            MarkReceiveUpdate = false;
-            location = NeighbourLocation(neighbourInf, selfInf.slot, currentLocalNodeNumber);
-            if(location == selfInf.sendLocation){
-                xTaskNotify(TaskSend_or_ReceiveData, SEND_DATA_MESSAGE, eSetValueWithOverwrite);
-                isMultiSending = false;
-            }
-            if(neighbourInf[location].updateFirst == true){
-                xTimerReset(xUpdateResendTimer, 0);
-                xTimerStart(xUpdateResendTimer, 0);
-            }
-            break;
-        case RECEIVE_ACK_UPDATE:
-            xTimerStop(xUpdateTimeOut, 0);
-            location = NeighbourLocation(neighbourInf, selfInf.slot, currentLocalNodeNumber);
-            neighbourInf[location].percentToGW = ackUpdateHeatValueMessage.percentToGW;
-            neighbourInf[location].timeToGW.simtime = ackUpdateHeatValueMessage.timeToGW.simtime;
-            if(location == selfInf.sendLocation){
-                xTaskNotify(TaskSend_or_ReceiveData, SEND_DATA_MESSAGE, eSetValueWithOverwrite);
-                xTimerReset(xStopSendDataTimer, 0);
-                xTimerStart(xStopSendDataTimer, 0);
-                isMultiSending = true;
-            }
-            break;
-        case RECEIVE_UPDATE_HEAT_VALUE:
-            xTimerStop(xUpdateTimeOut, 0);
-            MarkReceiveUpdate = true;
-            for (int i = 0; i < currentLocalNodeNumber; i++){
-                if(AddressCompare(&neighbourInf[i].Address, &updateHeatValueMessage.sourceAdress) == true){
-                    location = i;
-                    break;
-                }
-            }
-            neighbourInf[location].percentToGW = updateHeatValueMessage.percentToGW;
-            neighbourInf[location].timeToGW.simtime = updateHeatValueMessage.timeToGW.simtime;
-            message1.sourceAdress = selfInf.SelfAdress;
-            message1.destinationAdress = neighbourInf[location].Address;
-            message1.messageSize = (uint16_t)ACK_UPDATE_HEAT_VALUE_SIZE;
-            message1.NumberOfHops = 0;
-            message1.messageType = ACK_UPDATE_HEAT_VALUE;
-            message1.slot = neighbourInf[location].slot;
-            message1.percentToGW = selfInf.PRR;
-            message1.timeToGW.simtime = calculateTimeToGW(selfInf.slot, neighbourInf[selfInf.sendLocation]);
-            WriteAckUpdateHeatValueMessage(WriteData, &message1);
-            messageptr.messagePtr = WriteData;
-            messageptr.length = message1.messageSize;
-            xQueueSend(xQueueUART6Send, &messageptr, portMAX_DELAY);
-            if (location == selfInf.sendLocation){
-                xTimerReset(xStopSendDataTimer, 0);
-                xTimerStart(xStopSendDataTimer, 0);
-                isMultiSending = true;
-                vTaskDelay(pdMS_TO_TICKS(10));
-                xTaskNotify(TaskSend_or_ReceiveData, SEND_DATA_MESSAGE, eSetValueWithOverwrite);
-            }
-            break;
-        default:
-            break;
-        }
-    }
-}
 // Task Send or Receive Data Handler
 // This task will handle the data sending and receiving process
 void Task_Send_or_ReceiveData_Handler(void *pvParameters){

@@ -120,31 +120,6 @@ TEST(ReadTest, ReadAckRequestSlotFailMessageTest){
     EXPECT_EQ(msg.messageType, ACK_REQUEST_SLOT_FAIL);
     EXPECT_EQ(msg.slot, 1);
 }
-// Test case for ReadUpdateHeatValueMessage function
-TEST(ReadTest, ReadUpdateHeatValueMessage){
-    uint8_t buffer[UPDATE_HEAT_VALUE_SIZE] = {
-        0x00, 0x0A, 0xAA,  // source OUI
-        0x04, 0x05, 0x06,  // source NIC
-        0x00, 0x0A, 0xAA,  // dest OUI
-        0x0A, 0x0B, 0x0C,  // dest NIC
-        0x2E, 0x00,        // messageSize (46)
-        0x00, 0x00,        // NumberOfHops (0)
-        0x50,              // checkSum
-        0x05,              // messageType UPDATE_HEAT_VALUE
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x31, 0x40,// StartSendTime
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x60, 0x58, 0x40, // percentToGW
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x31, 0x40, // timeToGW.simtime
-        0x01, 0x00, 0x00, 0x00 // slot
-    };
-    UpdateHeatValueMessage msg;
-    ReadUpdateHeatValueMessage(buffer, &msg);
-    EXPECT_EQ(msg.messageSize, (uint16_t)UPDATE_HEAT_VALUE_SIZE);
-    EXPECT_EQ(msg.messageType, UPDATE_HEAT_VALUE);
-    EXPECT_EQ(msg.startSendTime, (double)17.5);
-    EXPECT_EQ(msg.percentToGW, (double)97.5);
-    EXPECT_EQ(msg.timeToGW.simtime, (double)17.5);
-    EXPECT_EQ(msg.slot, 1);
-}
 // Test case for ReadForwardPacketMessage function
 TEST(ReadTest, ReadForwardPacketMessage){
     uint8_t buffer[FORWARD_PACKET_SIZE] = {
@@ -220,29 +195,6 @@ TEST(ReadTest, ReadAckPacketFailToGWMessage){
     EXPECT_EQ(msg.percentToGW, (double)97.5);
     EXPECT_EQ(msg.timeToGW.simtime, (double)12.5);
     EXPECT_EQ(msg.seqNum, 1);
-}
-
-TEST(ReadTest, ReadAckUpdateHeatValueMessage){
-    uint8_t buffer[ACK_UPDATE_HEAT_VALUE_SIZE] = {
-        0x00, 0x0A, 0xAA,  // source OUI
-        0x04, 0x05, 0x06,  // source NIC
-        0x00, 0x0A, 0xAA,  // dest OUI
-        0x0A, 0x0B, 0x0C,  // dest NIC
-        0x26, 0x00,        // messageSize (38)
-        0x00, 0x00,        // NumberOfHops (0)
-        0x50,              // checkSum
-        0x09,              // messageType ACK_UPDATE_HEAT_VALUE
-        0x01, 0x00, 0x00, 0x00, // slot
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x60, 0x58, 0x40, // percentToGW
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x31, 0x40 // timeToGW.simtime
-    };
-    AckUpdateHeatValueMessage msg;
-    ReadAckUpdateHeatValueMessage(buffer, &msg);
-    EXPECT_EQ(msg.messageSize, (uint16_t)ACK_UPDATE_HEAT_VALUE_SIZE);
-    EXPECT_EQ(msg.messageType, ACK_UPDATE_HEAT_VALUE);
-    EXPECT_EQ(msg.slot, (int32_t)1);
-    EXPECT_EQ(msg.percentToGW, (double)97.5);
-    EXPECT_EQ(msg.timeToGW.simtime, (double)17.5);
 }
 
 // Test case for WriteHeader function
@@ -357,31 +309,7 @@ TEST(WriteTest, WriteAckRequestSlotFailMessageTest){
     uint8_t check = strncmp((char*)buffer + 18, (char*)&msg.slot, 4);
     EXPECT_EQ(check, 0);
 }
-// Test case for WriteUpdateHeatValueMessage function
-TEST(WriteTest, WriteUpdateHeatValueMessage){
-    uint8_t buffer[UPDATE_HEAT_VALUE_SIZE] = {0};
-    UpdateHeatValueMessage msg;
-    msg.messageSize = UPDATE_HEAT_VALUE_SIZE;
-    msg.messageType = UPDATE_HEAT_VALUE;
-    msg.startSendTime = 17.5;
-    msg.percentToGW = 97.5;
-    msg.timeToGW.simtime = 17.5;
-    msg.slot = 1;
-    WriteUpdateHeatValueMessage(buffer, &msg);
-    msg.checkSum = CheckSumCalculate(buffer, UPDATE_HEAT_VALUE_SIZE);
-    EXPECT_EQ(buffer[12], UPDATE_HEAT_VALUE_SIZE);
-    EXPECT_EQ(buffer[13], 0x00);
-    EXPECT_EQ(buffer[16], msg.checkSum);
-    EXPECT_EQ(buffer[17], 0x05);
-    uint8_t check = strncmp((char*)buffer + 18, (char*)&msg.startSendTime, 8);
-    EXPECT_EQ(check, 0);
-    check = strncmp((char*)buffer + 26, (char*)&msg.percentToGW, 8);
-    EXPECT_EQ(check, 0);
-    check = strncmp((char*)buffer + 34, (char*)&msg.timeToGW.simtime, 8);
-    EXPECT_EQ(check, 0);
-    check = strncmp((char*)buffer + 42, (char*)&msg.slot, 4);
-    EXPECT_EQ(check, 0);
-}
+
 // Test case for WriteForwardPacketMessage function
 TEST(WriteTest, WriteForwardPacketMessage){
     uint8_t buffer[FORWARD_PACKET_SIZE] = {0};
@@ -452,29 +380,6 @@ TEST(WriteTest, WriteAckPacketFailToGWMessage){
     check = strncmp((char*)buffer + 26, (char*)&msg.timeToGW.simtime, 8);
     EXPECT_EQ(check, 0);
     check = strncmp((char*)buffer + 34, (char*)&msg.seqNum, 4);
-    EXPECT_EQ(check, 0);
-}
-
-TEST(WriteTest, WriteAckUpdateHeatValueMessage){
-    uint8_t buffer[ACK_UPDATE_HEAT_VALUE_SIZE] = {0};
-    AckUpdateHeatValueMessage msg;
-    msg.messageSize = ACK_UPDATE_HEAT_VALUE_SIZE;
-    msg.messageType = ACK_UPDATE_HEAT_VALUE;
-    msg.slot = 1;
-    msg.percentToGW = 97.5;
-    msg.timeToGW.simtime = 17.5;
-    WriteAckUpdateHeatValueMessage(buffer, &msg);
-    msg.checkSum = CheckSumCalculate(buffer, ACK_UPDATE_HEAT_VALUE_SIZE);
-    EXPECT_EQ(buffer[12], ACK_UPDATE_HEAT_VALUE_SIZE);
-    EXPECT_EQ(buffer[13], 0x00);
-    EXPECT_EQ(buffer[16], msg.checkSum);
-    EXPECT_EQ(buffer[17], 0x09);
-    uint8_t check;
-    check = strncmp((char*)buffer + 18, (char*)&msg.slot, 4);
-    EXPECT_EQ(check, 0);
-    check = strncmp((char*)buffer + 22, (char*)&msg.percentToGW, 8);
-    EXPECT_EQ(check, 0);
-    check = strncmp((char*)buffer + 30, (char*)&msg.timeToGW.simtime, 8);
     EXPECT_EQ(check, 0);
 }
 

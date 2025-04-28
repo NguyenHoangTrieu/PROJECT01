@@ -28,17 +28,14 @@ void vSlotTimerCallback(TimerHandle_t xTimer)
             selfInf.NumberOfCycle++;
         }
         if(slotInf[selfInf.slot].isSlotAvailable == true && slotInf[selfInf.slot].isSlotSetup == false && currentLocalNodeNumber <= MAX_NEIGHBOUR){
-            if((DEVICE_TYPE == GATEWAY && selfInf.slot< MAX_NEIGHBOUR) ||
-            (DEVICE_TYPE == NODE && selfInf.slot< MAX_SLOT && selfInf.slot>= MAX_NEIGHBOUR && selfInf.NumberOfCycle <= 1)||
-            (DEVICE_TYPE == NODE && selfInf.NumberOfCycle > 1)){
+            if(DEVICE_TYPE == GATEWAY && selfInf.slot< MAX_NEIGHBOUR){
                 xTaskNotify(TaskSetupCommunication, 0, eNoAction);
                 SetCom_NotifyNum = SEND_FREE_SLOT_MESSAGE;
             }
-        }
-        else if(slotInf[selfInf.slot].isSlotAvailable == false && slotInf[selfInf.slot].isSlotSetup == true){
-            xTaskNotify(TaskUpdateHeatValue, SEND_UPDATE_HEAT_VALUE_MESSAGE, eSetValueWithOverwrite);
-        }
-        else if(slotInf[selfInf.slot].isSlotAvailable == false && slotInf[selfInf.slot].isSlotSetup == false){
+            else if(DEVICE_TYPE == NODE && selfInf.NumberOfCycle > 1){
+                xTaskNotify(TaskSend_or_ReceiveData, SEND_DATA_MESSAGE, eSetValueWithOverwrite);
+                isMultiSending = true;
+            }
         }
     }
     vTimerSetTimerID( xTimer, ( void * ) selfInf.slot );
@@ -75,16 +72,6 @@ void vBeginTimerCallback(TimerHandle_t xTimer)
     if (DEVICE_TYPE == NODE) xTimerStart(xGetDataTimer, 0);
     HAL_UART_Receive_IT(&huart6, (uint8_t *)&uart6_read_isr, 1);
     HAL_UART_Receive_IT(&huart1, (uint8_t *)&uart1_read_isr, 1);
-}
-
-void vUpdateTimeOutCallback(TimerHandle_t xTimer)
-{
-    xTaskNotify(TaskUpdateHeatValue, TIMEOUT_MESSAGE, eSetValueWithOverwrite);
-}
-
-void vUpdateResendTimeOutCallback(TimerHandle_t xTimer)
-{
-    xTaskNotify(TaskUpdateHeatValue, SEND_UPDATE_HEAT_VALUE_MESSAGE, eSetValueWithOverwrite);
 }
 
 void vDataSendTimeOutCallback(TimerHandle_t xTimer)

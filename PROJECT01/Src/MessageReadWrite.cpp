@@ -38,15 +38,6 @@ ReadHeader(buffer, message);
 memcpy(&message->slot, &buffer[18], 4);
 }
 
-/* Read Update Heat Value Message Payload from data buffer */
-void ReadUpdateHeatValueMessage(uint8_t *buffer, UpdateHeatValueMessage *message){
-ReadHeader(buffer, message);
-memcpy(&message->startSendTime, &buffer[18], 8);
-memcpy(&message->percentToGW, &buffer[26], 8);
-memcpy(&message->timeToGW.simtime, &buffer[34], 8);
-memcpy(&message->slot, &buffer[42], 4);
-}
-
 /* Read Forward Packet Message Payload from data buffer */
 void ReadForwardPacketMessage(uint8_t *buffer, ForwardPacketMessage *message){
 ReadHeader(buffer, message);
@@ -71,14 +62,6 @@ ReadHeader(buffer, message);
 memcpy(&message->percentToGW, &buffer[18], 8);
 memcpy(&message->timeToGW.simtime, &buffer[26], 8);
 memcpy(&message->seqNum, &buffer[34], 4);
-}
-
-/* Read Ack Update Heat Value Message Payload from data buffer */
-void ReadAckUpdateHeatValueMessage(uint8_t *buffer, AckUpdateHeatValueMessage *message){
-ReadHeader(buffer, message);
-memcpy(&message->slot, &buffer[18], 4);
-memcpy(&message->percentToGW, &buffer[22], 8);
-memcpy(&message->timeToGW.simtime, &buffer[30], 8);
 }
 
 /* Write Header of Message to data buffer */
@@ -127,17 +110,6 @@ message->checkSum = CheckSumCalculate(buffer, ACK_REQUEST_SLOT_FAIL_SIZE);
 buffer[16] = message->checkSum;
 }
 
-/* Write Update Heat Value Message Payload to data buffer */
-void WriteUpdateHeatValueMessage(uint8_t *buffer, UpdateHeatValueMessage *message){
-WriteHeader(buffer, message);
-memcpy(&buffer[18], &message->startSendTime, 8);
-memcpy(&buffer[26], &message->percentToGW, 8);
-memcpy(&buffer[34], &message->timeToGW.simtime, 8);
-memcpy(&buffer[42], &message->slot, 4);
-message->checkSum = CheckSumCalculate(buffer, UPDATE_HEAT_VALUE_SIZE);
-buffer[16] = message->checkSum;
-}
-
 /* Write Forward Packet Message Payload to data buffer */
 void WriteForwardPacketMessage(uint8_t *buffer, ForwardPacketMessage *message){
 WriteHeader(buffer, message);
@@ -169,15 +141,7 @@ memcpy(&buffer[34], &message->seqNum, 4);
 message->checkSum = CheckSumCalculate(buffer, ACK_PACKET_FAIL_TO_GW_SIZE);
 buffer[16] = message->checkSum;
 }
-/* Write Ack Update Heat Value Message Payload to data buffer */
-void WriteAckUpdateHeatValueMessage(uint8_t *buffer, AckUpdateHeatValueMessage *message){
-WriteHeader(buffer, message);
-memcpy(&buffer[18], &message->slot, 4);
-memcpy(&buffer[22], &message->percentToGW, 8);
-memcpy(&buffer[30], &message->timeToGW.simtime, 8);
-message->checkSum = CheckSumCalculate(buffer, ACK_UPDATE_HEAT_VALUE_SIZE);
-buffer[16] = message->checkSum;
-}
+
 /* Calculate CheckSum */
 uint8_t CheckSumCalculate(uint8_t *buffer, uint16_t len){
     uint16_t checkSum = 0;
