@@ -1,4 +1,4 @@
-# **Sequence Diagram for Setup communication between Node A and Node B or Node with Gateway:**
+# **Sequence Diagram for Setup communication between Node with Gateway:**
 
 ###  1. Sequence Diagram for Receive Free Slot Message:
 
@@ -41,21 +41,21 @@ sequenceDiagram
 
     activate Setup
     Setup ->> Setup: PrepareRequestSlotMessage()
-    Setup ->> Setup: MarkSlotSet_AddNeighbourInf()
-    Setup ->> Setup: Mark_Send_UpdateFirst()
     deactivate Setup
     alt SlotIsNotSetAndAvaiable
+    loop Until Receive ACK Request Slot Message or request over n time
         Setup ->> Send: xQueueSend()
         activate Send
         Send ->> Send: SendRequestSlotMessage()
         deactivate Send
     end
+    end
 ```
 
-### 3. Sequence Diagram for Handle Request Slot Message in Node A and Receive ACK in Node B:
+### 3. Sequence Diagram for Handle Request Slot Message in Gateway and Receive ACK in Node B:
 ```mermaid
 sequenceDiagram
-    participant Setup as SetupCommunication Task in Node A
+    participant Setup as SetupCommunication Task in Gateway
     participant Send as SendUART6 Task
     participant NodeB as Node B
     activate Setup
@@ -67,7 +67,7 @@ sequenceDiagram
         Send ->> NodeB: SendACKRequestSlotSuccessMessage()
         deactivate Send
         activate NodeB
-        NodeB ->> NodeB: MarkSlotIsSet_AndSetNeighbourInf()
+        NodeB ->> NodeB: MarkSlotIsSet_And_SetGatewayInf()
         deactivate NodeB
     else Slot Is Set
         activate Setup
@@ -81,62 +81,19 @@ sequenceDiagram
         deactivate NodeB
     end
 ```
+### Flowchart: Setup Communication Between Node and Gateway
 
-### 4. After Setup Communication for the 1st time:
-#### After Setup communication with other Node/Gateway for the first time, the slot that has been set is slot 0 and in other slots of 1st cycle Node will listen to any other message(FreeSlot/Update Heat Value) to check if this slot is available to send Free Slot message in next cycle:
-
-<table border="1" cellspacing="0" cellpadding="5" style="text-align:center;">
-  <tr>
-    <th>Slot 0</th>
-    <th>Slot 1</th>
-    <th>Slot 2</th>
-    <th>Slot 3</th>
-    <th>Slot 4</th>
-    <th>Slot 5</th>
-  </tr>
-  <tr>
-    <th>Set</th>
-    <th>Check</th>
-    <th>Check</th>
-    <th>Check</th>
-    <th>Check</th>
-    <th>Check</th>
-  </tr>
-</table>
-
-#### nháp:
-<table border="1" cellspacing="0" cellpadding="5" style="text-align:center;">
-  <tr>
-    <th>Slot 0 (G - S)</th>
-    <th>Slot 1 (G - S)</th>
-    <th>Slot 2 (G - S)</th>
-    <th>Slot 3 (G)</th>
-    <th>Slot 4 (G)</th>
-    <th>Slot 5 (G)</th>
-    <th>Slot 0 (G - U)</th>
-    <th>Slot 1 (G - S)</th>
-  </tr>
-  <tr>
-    <th>Slot 0(A - R)</th>
-    <th>Slot 1(A - X)</th>
-    <th>Slot 2(A - X)</th>
-    <th>Slot 3(A - S)</th>
-    <th>Slot 4(A - S)</th>
-    <th>Slot 5(A - S)</th>
-    <th>Slot 0(A - U)</th>
-    <th>Slot 1(A)</th>
-  </tr>
-    <tr>
-    <th> </th>
-    <th> </th>
-    <th>Slot 0(B - RG)</th>
-    <th>Slot 1(B - RA)</th>
-    <th>Slot 2(B)</th>
-    <th>Slot 3(B)</th>
-    <th>Slot 4(B - X)</th>
-    <th>Slot 5(B - X)</th>
-  </tr>
-</table>
-
-- If Slot Register (A for example) = Slot 0 of Gateway/Other Node, in second-half of cycle, A will send Free Slot Message.
-- If Not, Node (B for example) will hear till end of cycle.
+```mermaid
+flowchart TD
+  Start([Start]) --> Wait[Wait Free Slot Message]
+  Wait --> Check{Received?}
+  Check -- Yes --> Create[Create Request Slot Message and Create Resend Timer]
+  Create --> Send[Send Request Slot Message]
+  Check -- No --> Wait
+  Send --> Wait_ACK[Wait for ACK Request Slot Success Message]
+  Wait_ACK -- Receive ACK Request Slot Fail --> MarkNot[Mark this slot is unavailable for communication] --> Wait
+  Wait_ACK -- Receive ACK Request Slot Success --> MarkSet[Mark Slot Is Setup and Update Gateway Information] --> End([Done])
+  Wait_ACK -- Resend Timer Timeout --> CheckResend{"Is request<br/>over n time?"}
+  CheckResend -- No --> Send
+  CheckResend -- Yes --> Wait
+```
