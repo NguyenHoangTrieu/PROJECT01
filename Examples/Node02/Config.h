@@ -18,6 +18,6 @@
 #define NIC_BIT_2       0x00
 #define NIC_BIT_3       0x04
 #endif
-#define BEGIN_TIME      19200
+#define BEGIN_TIME      5000
 /*----------------------*/
 #endif
