@@ -64,7 +64,7 @@ def test_uart_read(uart_com3, uart_com7, uart_com5, uart_com8):
     """Read data from COM3 and COM7 for 60 seconds, group bursts, and print at the end."""
 
     start_time = time.time()
-    timeout = 120  # Total reading duration
+    timeout = 7200  # Total reading duration
     burst_timeout_com3 = 0.01
     burst_timeout_com5 = 0.01
     burst_timeout_com8 = 0.01

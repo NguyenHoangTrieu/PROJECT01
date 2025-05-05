@@ -18,7 +18,7 @@
 #define ACK_PACKET_FAIL_TO_GW_SIZE      HEADER_SIZE + 8 + 8 + 4
 #define ACK_UPDATE_HEAT_VALUE_SIZE      HEADER_SIZE + 4 + 8 + 8
 #define MAX_MESSAGE_SIZE                UPDATE_HEAT_VALUE_SIZE + 10
-#define MAX_NEIGHBOUR                   3
+#define MAX_NEIGHBOUR                   6
 #define MAX_SLOT                        MAX_NEIGHBOUR//begin from slots 0 and multiply by 2 for reserve.
 #define DATA_BUFFER_SIZE                20 // packets
 #define DISPLAY_BUFFER_SIZE             10 // Nodes  
