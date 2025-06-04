@@ -101,3 +101,17 @@ Check -- No & ACK Timeout --> Send
 Check2 -- No -->Send
 Check2 -- Yes --> End
 ```
+
+```mermaid
+flowchart LR
+    subgraph SensorNodes [Sensor Nodes]
+        A1["Sensor Node 1<br/>(STM32 + LoRa)"]
+        A2["Sensor Node 2<br/>(STM32 + LoRa)"]
+        A3["Sensor Node n<br/>(STM32 + LoRa)"]
+    end
+
+    A1 --> G["Gateway<br/>(STM32 + LoRa)"]
+    A2 --> G
+    A3 --> G
+    G --> PC["PC / GUI<br/>(Hiển thị dữ liệu môi trường\nthời gian thực)"]
+```
